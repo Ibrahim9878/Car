@@ -1,0 +1,179 @@
+#include <iostream>
+#include <cassert>
+#include <string>
+#include <vector>
+using namespace std;
+
+class Car
+{
+protected:
+    int _id;
+    static int static_id;
+    string* _model;
+    string* _vendor;
+    double* _engine;
+    bool _HasSpoiler;
+    Car()
+    {
+        _id = static_id++;
+        _model = nullptr;
+        _vendor = nullptr;
+        _engine = nullptr;
+        _HasSpoiler = NULL;
+    }
+    Car(string model, string vendor, double Engine, bool HasSpoiler):Car()
+    {
+        SetModel(model);
+        SetVendor(vendor);
+        SetEngine(Engine);
+        _HasSpoiler = HasSpoiler;
+    }
+public:
+    ~Car()
+    {
+        if (_model != nullptr)
+            delete _model;
+        if (_vendor != nullptr)
+            delete _vendor;
+        if (_engine != nullptr)
+            delete _engine;
+        _model, _vendor, _engine = nullptr;
+    }
+
+    void SetModel(const string model)
+    {
+        if (model.length() < 2 || model.length() > 16)
+            assert(!"Model is Wrong");
+        if (_model != nullptr)
+            delete _model;
+        _model = new string(model);
+    }
+    void SetVendor(const string vendor)
+    {
+        if (vendor.length() < 2 || vendor.length() > 16)
+            assert(!"vendor is Wrong");
+        if (_vendor != nullptr)
+            delete _vendor;
+        _vendor = new string(vendor);
+    }
+    void SetEngine(double Engine)
+    {
+        if (Engine < 2 || Engine> 16)
+            assert(!"Enigne Is Worng");
+        if (_engine != nullptr)
+            delete _engine;
+        _engine = new double(Engine);
+    }
+    int GetID() { return _id; }
+    string* GetModel() { return _model; }
+    string* GetVendor() { return _vendor; }
+    double* GetEngine() { return _engine; }
+    bool GetHasSpoiler() { return _HasSpoiler; }
+
+
+    virtual double Find100e_ne_qeder_yandirir()
+    {
+        return *_engine * 1.90;
+    }
+    virtual void Print()
+    {
+        cout << "Id: " << _id << endl;
+        cout << "Model: " << (_model ? *_model : NULL) << endl;
+        cout << "Vendor: " << (_vendor ? *_vendor : NULL) << endl;
+        cout << "Engine: " << (_engine ? *_engine : NULL) << endl;
+        cout << boolalpha;
+        cout << "HasSpoiler: " << _HasSpoiler << endl;
+    }
+};
+int Car::static_id = 1;
+
+class Manual : public Car
+{
+    int _skorsSayi;
+public:
+    Manual()
+    {
+        _skorsSayi = 4;
+    }
+    Manual(int value,string model, string vendor, double Engine, bool HasSpoiler)
+        :Car(model, vendor, Engine, HasSpoiler)
+    {
+        SetSkorsSayi(value);
+    }
+
+
+    int GetSkors() { return _skorsSayi; }
+    void SetSkorsSayi(int SkorsSay)
+    {
+        if (SkorsSay < 4 || SkorsSay > 9)
+            assert(!"Skorssayi sehvdir");
+        _skorsSayi = SkorsSay;
+    }
+
+    void Print() override
+    {
+        Car::Print();
+        cout << "SkorsSay: " << _skorsSayi << endl;
+    }
+    double Find100e_ne_qeder_yandirir() override
+    {
+        return _skorsSayi * *(Car::GetEngine()) * 1.32;
+    }
+};
+
+class Automatic : public Car
+{
+    int KaropkaSay;//hem avtomat hemde manual oldugudu
+public:
+
+    Automatic()
+    {
+        KaropkaSay = 1;
+    }
+    Automatic(int value, string model, string vendor, double Engine, bool HasSpoiler)
+        :Car(model, vendor,Engine,HasSpoiler)
+    {
+        SetKaropkaSay(value);
+    }
+    int GetKaropka() { return KaropkaSay; }
+    void SetKaropkaSay(int value)
+    {
+        if (value != 1 && value != 2)
+            assert(!"Car has maximum 2 karopka");
+        KaropkaSay = value;
+    }
+    void Print() override
+    {
+        Car::Print();
+        cout << "KAropkaSay: " << KaropkaSay << endl;
+    }
+    double Find100e_ne_qeder_yandirir() override
+    {
+        return KaropkaSay * (*_engine) * 1.43;
+    }
+};
+
+void Print(Car* car)
+{
+    cout << endl;
+    car->Print();
+}
+int main()
+{
+    //Manual* car1 = new Manual(5, "Bmw", "Vendor", 12.2, true);
+    //Manual* car2 = new Manual(5, "Bmw", "Vendor", 12.2, true);
+    //Automatic* car3 = new Automatic(5, "Bmw", "Vendor", 12.2, true);
+    //car3->Print();
+    //Print(car1);
+
+    vector<Car*> cars ;
+
+    cars.push_back(new Manual  (5, "Bmw", "Vendor", 12.2, true));
+    cars.push_back(new Automatic(2, "Bmw", "Vendor", 12.2, true));
+
+    for (size_t i = 0; i < cars.size(); i++)
+    {
+        Print(cars[i]);
+    }
+}
+
